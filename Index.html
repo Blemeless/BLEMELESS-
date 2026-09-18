@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apex Trade · Realistic Trading Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: #0a0d14;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 18px;
+      color: #eef3fc;
+    }
+
+    /* DASHBOARD CONTAINER */
+    .dashboard {
+      max-width: 1440px;
+      width: 100%;
+      background: #121721;
+      border-radius: 28px;
+      padding: 22px 26px;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.03);
+      transition: all 0.2s;
+    }
+
+    /* ---- NAVBAR ---- */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 26px;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      background: linear-gradient(145deg, #2f7cf6, #1a54d0);
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #fff;
+      box-shadow: 0 8px 18px -4px rgba(47, 124, 246, 0.5);
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: -0.4px;
+      background: linear-gradient(to right, #ffffff, #b8ccff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 6px;
+      background: #1a1f2b;
+      padding: 5px;
+      border-radius: 40px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #98a6bd;
+      font-weight: 500;
+      font-size: 14px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      transition: all 0.2s;
+    }
+
+    .nav-links a.active {
+      background: #2f7cf6;
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(47, 124, 246, 0.4);
+    }
+
+    .nav-links a:hover:not(.active) {
+      background: #252d3a;
+      color: #d4dff0;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #1a1f2b;
+      padding: 6px 16px 6px 10px;
+      border-radius: 40px;
+      cursor: default;
+    }
+
+    .user-profile i {
+      background: #2f7cf6;
+      padding: 10px;
+      border-radius: 50%;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .user-profile span {
+      font-size: 14px;
+      font-weight: 500;
+      color: #e2e9f5;
+    }
+
+    .user-profile .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      margin-left: 2px;
+      box-shadow: 0 0 0 2px #1a1f2b;
+    }
+
+    /* ---- MAIN GRID ---- */
+    .grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    /* CARD BASE */
+    .card {
+      background: #181e2a;
+      border-radius: 22px;
+      padding: 20px 22px;
+      box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      transition: transform 0.1s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      box-shadow: 0 16px 28px -8px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #9aabc4;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title i {
+      color: #2f7cf6;
+    }
+
+    .more-options {
+      color: #5a6a80;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .more-options:hover {
+      background: #232b39;
+      color: #b8c8dc;
+    }
+
+    /* BALANCE CARD */
+    .balance-amount {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: #fff;
+      line-height: 1.1;
+    }
+
+    .balance-sub {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #8b9bb4;
+      font-size: 13px;
+      margin: 6px 0 16px;
+    }
+
+    .positive {
+      color: #22c55e;
+      background: rgba(34, 197, 94, 0.12);
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .sparkline {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 56px;
+      margin: 12px 0 14px;
+    }
+
+    .bar {
+      flex: 1;
+      background: linear-gradient(to top, #2f7cf6, #5b9aff);
+      border-radius: 4px 4px 0 0;
+      opacity: 0.65;
+      transition: height 0.3s, opacity 0.2s;
+      min-height: 6px;
+    }
+
+    .bar:hover {
+      opacity: 1;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 14px;
+      border-top: 1px solid #232c39;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #6b7b92;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .stat-value {
+      font-size: 17px;
+      font-weight: 600;
+      color: #eef3fc;
+    }
+
+    /* WATCHLIST */
+    .watchlist-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid #232c39;
+    }
+
+    .watchlist-item:last-child {
+      border-bottom: none;
+    }
+
+    .coin-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .coin-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: #232b39;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      color: #b8ccff;
+    }
+
+    .coin-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: #e2e9f5;
+    }
+
+    .coin-symbol {
+      font-size: 11px;
+      color: #6b7b92;
+      margin-top: 1px;
+    }
+
+    .coin-price {
+      text-align: right;
+    }
+
+    .price-value {
+      font-weight: 600;
+      font-size: 14px;
+      color: #eef3fc;
+    }
+
+    .price-change {
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 3px;
+      margin-top: 2px;
+    }
+
+    .up { color: #22c55e; }
+    .down { color: #ef4444; }
+
+    /* ORDER BOOK */
+    .order-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+      background: #0f131b;
+      padding: 4px;
+      border-radius: 30px;
+    }
+
+    .order-tab {
+      flex: 1;
+      text-align: center;
+      padding: 7px 0;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      color: #8595ab;
+      transition: all 0.2s;
+    }
+
+    .order-tab.active {
+      background: #2f7cf6;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(47, 124, 246, 0.35);
+    }
+
+    .order-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12.5px;
+      padding: 5px 0;
+      color: #b8c4d6;
+    }
+
+    .order-price { font-weight: 500; }
+    .order-amount { color: #7e8ca0; }
+
+    .buy-row .order-price { color: #22c55e; }
+    .sell-row .order-price { color: #ef4444; }
+
+    .order-divider {
+      border-top: 1px solid #252e3a;
+      margin: 10px 0;
+      position: relative;
+    }
+
+    .order-divider span {
+      position: absolute;
+      top: -9px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #181e2a;
+      padding: 0 10px;
+      font-size: 11px;
+      color: #5f7087;
+    }
+
+    .trade-btn {
+      background: #2f7cf6;
+      border: none;
+      width: 100%;
+      padding: 13px;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #fff;
+      margin-top: 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+      box-shadow: 0 8px 18px -6px #2f7cf6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+    }
+
+    .trade-btn:hover {
+      background: #4288ff;
+      transform: translateY(-1px);
+      box-shadow: 0 12px 22px -8px #2f7cf6;
+    }
+
+    .trade-btn:active {
+      transform: translateY(1px);
+    }
+
+    .trade-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* BOTTOM GRID */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.9fr 1fr;
+      gap: 18px;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 110px;
+      margin: 8px 0 4px;
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .chart-bar {
+      flex: 1;
+      background: #232d3f;
+      border-radius: 6px 6px 0 0;
+      transition: all 0.2s;
+      cursor: pointer;
+      min-height: 10px;
+    }
+
+    .chart-bar:hover {
+      background: #2f7cf6;
+      box-shadow: 0 0 14px rgba(47, 124, 246, 0.5);
+    }
+
+    .chart-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-size: 11px;
+      color: #6b7b92;
+    }
+
+    .activity-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid #232c39;
+      font-size: 13.5px;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .activity-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: #1f2734;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2f7cf6;
+      font-size: 13px;
+    }
+
+    .activity-desc {
+      font-weight: 500;
+      color: #cfd9e8;
+    }
+
+    .activity-time {
+      font-size: 11px;
+      color: #6b7b92;
+      margin-top: 2px;
+    }
+
+    .activity-amount {
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .amount-green { color: #22c55e; }
+    .amount-red { color: #ef4444; }
+
+    /* RESPONSIVE */
+    @media (max-width: 1150px) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .grid .card:first-child {
+        grid-column: span 2;
+      }
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .grid .card:first-child {
+        grid-column: span 1;
+      }
+      .navbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .nav-links {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .dashboard {
+        padding: 18px;
+      }
+      .balance-amount {
+        font-size: 30px;
+      }
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #121721; }
+    ::-webkit-scrollbar-thumb { background: #2f3a4b; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fas fa-chart-line"></i></div>
+        <div class="logo-text">Apex Trade</div>
+      </div>
+      <div class="nav-links">
+        <a href="#" class="active"><i class="fas fa-columns" style="margin-right:6px;"></i>Dashboard</a>
+        <a href="#"><i class="fas fa-chart-pie" style="margin-right:6px;"></i>Markets</a>
+        <a href="#"><i class="fas fa-wallet" style="margin-right:6px;"></i>Portfolio</a>
+        <a href="#"><i class="fas fa-cog" style="margin-right:6px;"></i>Settings</a>
+      </div>
+      <div class="user-profile">
+        <i class="fas fa-user"></i>
+        <span>Alex Morgan</span>
+        <div class="status-dot"></div>
+      </div>
+    </nav>
+
+    <!-- MAIN GRID -->
+    <div class="grid">
+      <!-- Balance -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-wallet"></i> Total Balance</div>
+          <div class="more-options"><i class="fas fa-ellipsis-h"></i></div>
+        </div>
+        <div class="balance-amount" id="balanceAmount">$48,392.65</div>
+        <div class="balance-sub">
+          <span>+$2,145.30 (4.8%)</span>
+          <span class="positive"><i class="fas fa-arrow-up"></i> +4.8%</span>
+        </div>
+        <div class="sparkline" id="sparkline"></div>
+        <div class="stats-row">
+          <div class="stat-item">
+            <span class="stat-label">Today's P&L</span>
+            <span class="stat-value" style="color:#22c55e;">+$1,240.50</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Available</span>
+            <span class="stat-value">$12,830.20</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Margin</span>
+            <span class="stat-value">2.4x</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Watchlist -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-star"></i> Watchlist</div>
+          <div class="more-options"><i class="fas fa-plus"></i></div>
+        </div>
+        <div id="watchlistContainer"></div>
+      </div>
+
+      <!-- Order Book -->
+      <div class="card">
+        <div class="order-tabs">
+          <div class="order-tab active" id="tabBuy">Buy</div>
+          <div class="order-tab" id="tabSell">Sell</div>
+        </div>
+        <div id="orderBookContainer"></div>
+        <button class="trade-btn" id="tradeButton"><i class="fas fa-bolt"></i> Place Order</button>
+      </div>
+    </div>
+
+    <!-- BOTTOM GRID -->
+    <div class="bottom-grid">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-chart-bar"></i> Portfolio Performance</div>
+          <div class="more-options"><i class="fas fa-calendar-alt"></i> 1W</div>
+        </div>
+        <div class="chart-container" id="chartContainer"></div>
+        <div class="chart-labels">
+          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-history"></i> Recent Activity</div>
+          <div class="more-options"><i class="fas fa-ellipsis-h"></i></div>
+        </div>
+        <div id="activityContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      /* ============================================================
+         DATA
+      ============================================================ */
+
+      // Sparkline (12 bars)
+      const sparkData = [0.25, 0.5, 0.35, 0.75, 0.55, 0.85, 0.65, 0.95, 0.8, 1.0, 0.7, 0.9];
+
+      // Watchlist
+      const watchlist = [
+        { name: 'Bitcoin',  symbol: 'BTC', price: 63420.50, change:  2.34, icon: '₿' },
+        { name: 'Ethereum', symbol: 'ETH', price:  3450.25, change:  1.87, icon: 'Ξ' },
+        { name: 'Solana',   symbol: 'SOL', price:   142.80, change: -0.56, icon: '◎' },
+        { name: 'Cardano',  symbol: 'ADA', price:     0.624, change: 3.12, icon: '₳' },
+        { name: 'Polkadot', symbol: 'DOT', price:     7.28,  change: -1.23, icon: '●' }
+      ];
+
+      // Order book
+      const buyOrders = [
+        { price: 63380.20, amount: 0.452, total: 28663 },
+        { price: 63350.75, amount: 1.230, total: 77923 },
+        { price: 63320.10, amount: 0.784, total: 49642 },
+        { price: 63280.50, amount: 2.100, total: 132890 },
+        { price: 63240.25, amount: 0.950, total: 60080 }
+      ];
+      const sellOrders = [
+        { price: 63410.30, amount: 0.320, total: 20291 },
+        { price: 63440.60, amount: 1.150, total: 72957 },
+        { price: 63475.80, amount: 0.660, total: 41894 },
+        { price: 63510.45, amount: 1.780, total: 113048 },
+        { price: 63540.00, amount: 0.410, total: 26051 }
+      ];
+
+      // Activity feed
+      const activities = [
+        { desc: 'Bought BTC',  time: '2 min ago',  amount: '+0.023 BTC',  type: 'green', icon: 'fa-arrow-down' },
+        { desc: 'Sold ETH',    time: '15 min ago', amount: '-1.20 ETH',   type: 'red',   icon: 'fa-arrow-up' },
+        { desc: 'Deposit',     time: '1 hr ago',   amount: '+$5,000',     type: 'green', icon: 'fa-circle-down' },
+        { desc: 'Bought SOL',  time: '3 hr ago',   amount: '+12.5 SOL',   type: 'green', icon: 'fa-arrow-down' },
+        { desc: 'Sold ADA',    time: '5 hr ago',   amount: '-2400 ADA',   type: 'red',   icon: 'fa-arrow-up' }
+      ];
+
+      /* ============================================================
+         RENDER FUNCTIONS
+      ============================================================ */
+
+      // --- SPARKLINE ---
+      function renderSparkline() {
+        const el = document.getElementById('sparkline');
+        el.innerHTML = '';
+        sparkData.forEach(val => {
+          const bar = document.createElement('div');
+          bar.className = 'bar';
+          bar.style.height = `${10 + val * 46}px`;
+          el.appendChild(bar);
+        });
+      }
+
+      // --- WATCHLIST ---
+      function renderWatchlist() {
+        const el = document.getElementById('watchlistContainer');
+        el.innerHTML = '';
+        watchlist.forEach(coin => {
+          const isUp = coin.change >= 0;
+          const cls = isUp ? 'up' : 'down';
+          const arrow = isUp ? 'fa-arrow-up' : 'fa-arrow-down';
+          const div = document.createElement('div');
+          div.className = 'watchlist-item';
+          div.innerHTML = `
+            <div class="coin-info">
+              <div class="coin-icon">${coin.icon}</div>
+              <div>
+                <div class="coin-name">${coin.name}</div>
+                <div class="coin-symbol">${coin.symbol}</div>
+              </div>
+            </div>
+            <div class="coin-price">
+              <div class="price-value">$${coin.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+              <div class="price-change ${cls}">
+                <i class="fas ${arrow}"></i> ${Math.abs(coin.change)}%
+              </div>
+            </div>
+          `;
+          el.appendChild(div);
+        });
+      }
+
+      // --- ORDER BOOK ---
+      function renderOrderBook(tab) {
+        const el = document.getElementById('orderBookContainer');
+        el.innerHTML = '';
+        const orders = tab === 'buy' ? buyOrders : sellOrders;
+        const rowCls = tab === 'buy' ? 'buy-row' : 'sell-row';
+
+        orders.forEach(o => {
+          const row = document.createElement('div');
+          row.className = `order-row ${rowCls}`;
+          row.innerHTML = `
+            <span class="order-price">$${o.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
+            <span class="order-amount">${o.amount.toFixed(3)}</span>
+            <span class="order-amount">$${(o.total/1000).toFixed(1)}k</span>
+          `;
+          el.appendChild(row);
+        });
+
+        // Divider + spread
+        const divider = document.createElement('div');
+        divider.className = 'order-divider';
+        divider.innerHTML = '<span>Spread 0.12%</span>';
+        el.appendChild(divider);
+
+        // Opposite side (2 rows for realism)
+        const opposite = tab === 'buy' ? sellOrders.slice(0, 2) : buyOrders.slice(0, 2);
+        opposite.forEach(o => {
+          const row = document.createElement('div');
+          row.className = `order-row ${tab === 'buy' ? 'sell-row' : 'buy-row'}`;
+          row.innerHTML = `
+            <span class="order-price">$${o.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
+            <span class="order-amount">${o.amount.toFixed(3)}</span>
+            <span class="order-amount">$${(o.total/1000).toFixed(1)}k</span>
+          `;
+          el.appendChild(row);
+        });
+      }
+
+      // --- CHART ---
+      function renderChart() {
+        const el = document.getElementById('chartContainer');
+        el.innerHTML = '';
+        const heights = [0.45, 0.7, 0.55, 0.85, 0.65, 0.9, 0.75];
+        heights.forEach(h => {
+          const bar = document.createElement('div');
+          bar.className = 'chart-bar';
+          bar.style.height = `${18 + h * 78}px`;
+          bar.addEventListener('mouseenter', () => {
+            bar.style.background = '#2f7cf6';
+            bar.style.boxShadow = '0 0 14px rgba(47,124,246,0.5)';
+          });
+          bar.addEventListener('mouseleave', () => {
+            bar.style.background = '#232d3f';
+            bar.style.boxShadow = 'none';
+          });
+          el.appendChild(bar);
+        });
+      }
+
+      // --- ACTIVITY ---
+      function renderActivity() {
+        const el = document.getElementById('activityContainer');
+        el.innerHTML = '';
+        activities.forEach(a => {
+          const div = document.createElement('div');
+          div.className = 'activity-item';
+          div.innerHTML = `
+            <div class="activity-left">
+              <div class="activity-icon"><i class="fas ${a.icon}"></i></div>
+              <div>
+                <div class="activity-desc">${a.desc}</div>
+                <div class="activity-time">${a.time}</div>
+              </div>
+            </div>
+            <div class="activity-amount ${a.type === 'green' ? 'amount-green' : 'amount-red'}">${a.amount}</div>
+          `;
+          el.appendChild(div);
+        });
+      }
+
+      /* ============================================================
+         INTERACTIONS
+      ============================================================ */
+
+      // Tab switching
+      const tabBuy = document.getElementById('tabBuy');
+      const tabSell = document.getElementById('tabSell');
+
+      tabBuy.addEventListener('click', () => {
+        tabBuy.classList.add('active');
+        tabSell.classList.remove('active');
+        renderOrderBook('buy');
+      });
+
+      tabSell.addEventListener('click', () => {
+        tabSell.classList.add('active');
+        tabBuy.classList.remove('active');
+        renderOrderBook('sell');
+      });
+
+      // Trade button
+      const tradeBtn = document.getElementById('tradeButton');
+      tradeBtn.addEventListener('click', () => {
+        tradeBtn.disabled = true;
+        tradeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        setTimeout(() => {
+          tradeBtn.innerHTML = '<i class="fas fa-check-circle"></i> Order Executed';
+          tradeBtn.style.background = '#22c55e';
+          tradeBtn.style.boxShadow = '0 8px 18px -6px #22c55e';
+          setTimeout(() => {
+            tradeBtn.innerHTML = '<i class="fas fa-bolt"></i> Place Order';
+            tradeBtn.style.background = '#2f7cf6';
+            tradeBtn.style.boxShadow = '0 8px 18px -6px #2f7cf6';
+            tradeBtn.disabled = false;
+          }, 1400);
+        }, 800);
+      });
+
+      /* ============================================================
+         LIVE PRICE FLICKER (realism)
+      ============================================================ */
+      const balanceEl = document.getElementById('balanceAmount');
+      let balance = 48392.65;
+
+      setInterval(() => {
+        // Balance small oscillation
+        balance += (Math.random() - 0.48) * 18;
+        balanceEl.textContent = `$${balance.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+
+        // Update first watchlist price slightly
+        const priceEls = document.querySelectorAll('.price-value');
+        if (priceEls.length > 0) {
+          const shift = (Math.random() - 0.5) * 12;
+          watchlist[0].price = Math.max(0, watchlist[0].price + shift);
+          priceEls[0].textContent = `$${watchlist[0].price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+        }
+      }, 3500);
+
+      /* ============================================================
+         INIT
+      ============================================================ */
+      renderSparkline();
+      renderWatchlist();
+      renderOrderBook('buy');
+      renderChart();
+      renderActivity();
+    })();
+  </script>
+</body>
+</html>
